@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 
 const corsOptions ={
-    origin:'http://localhost:3000', 
+    origin:'https://dns-manager-aws-route-53.netlify.app/', 
     credentials:true,            //access-control-allow-credentials:true
     optionSuccessStatus:200
 }
