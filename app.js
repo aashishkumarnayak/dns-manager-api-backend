@@ -1,9 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const authRoutes = require('./routes/authRoutes');
-const dnsRoutes = require('./routes/dnsRoutes');
-const { verifyToken } = require('./middlewares/authMiddleware');
+const authRoutes = require('./src/routes/authRoutes');
+const dnsRoutes = require('./src/routes/dnsRoutes');
+const { verifyToken } = require('./src/middlewares/authMiddleware');
 require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
