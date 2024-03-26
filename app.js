@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-
 const authRoutes = require('./src/routes/authRoutes');
 const dnsRoutes = require('./src/routes/dnsRoutes');
 const { verifyToken } = require('./src/middlewares/authMiddleware');
@@ -9,14 +8,9 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-
- const cors = require('cors');
-// const corsOptions ={
-//   origin: 'https://dns-manager-aws-route-53.netlify.app',
-//     credentials:true,            //access-control-allow-credentials:true
-//     optionSuccessStatus:200
-// }
-// app.use(cors(corsOptions));
+const cors = require('cors');
+app.use(cors());
+app.use(express.json()); // Add this line to parse JSON request bodies
 
 app.use((req, res, next) => {
   res.header(
@@ -28,20 +22,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// const corsOptions ={
-//   origin: 'https://dns-manager-aws-route-53.netlify.app',
-//   credentials: true, // allow cookies to be sent with the request
-//   optionSuccessStatus: 200
-// };
-
-// app.use(cors(corsOptions));
-
-
 // MongoDB Connection
-
-mongoose.connect(process.env.DB_URL, {
-  
-});
+mongoose.connect(process.env.DB_URL);
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => {
