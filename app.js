@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
+
 const authRoutes = require('./src/routes/authRoutes');
 const dnsRoutes = require('./src/routes/dnsRoutes');
 const { verifyToken } = require('./src/middlewares/authMiddleware');
@@ -10,23 +10,32 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 
-
-const corsOptions ={
-  origin: 'https://dns-manager-aws-route-53.netlify.app',
-    credentials:true,            //access-control-allow-credentials:true
-    optionSuccessStatus:200
-}
-app.use(cors(corsOptions));
+ const cors = require('cors');
+// const corsOptions ={
+//   origin: 'https://dns-manager-aws-route-53.netlify.app',
+//     credentials:true,            //access-control-allow-credentials:true
+//     optionSuccessStatus:200
+// }
+// app.use(cors(corsOptions));
 
 app.use((req, res, next) => {
   res.header(
     "Access-Control-Allow-Origin",
-    "React app URL"
+    "https://dns-manager-aws-route-53.netlify.app"
   );
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
   res.header("Access-Control-Allow-Headers", "Content-Type");
   next();
 });
+
+// const corsOptions ={
+//   origin: 'https://dns-manager-aws-route-53.netlify.app',
+//   credentials: true, // allow cookies to be sent with the request
+//   optionSuccessStatus: 200
+// };
+
+// app.use(cors(corsOptions));
+
 
 // MongoDB Connection
 
