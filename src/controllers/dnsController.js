@@ -46,30 +46,30 @@ exports.bulkUpload = async (req, res) => {
         await DnsRecordModel.insertMany(records);
 
         // Call the Route 53 API to create DNS records
-        records.forEach(async (record) => {
-          const params = {
-            ChangeBatch: {
-              Changes: [
-                {
-                  Action: "CREATE",
-                  ResourceRecordSet: {
-                    Name: record.domain,
-                    Type: record.type,
-                    TTL: record.ttl,
-                    ResourceRecords: [{ Value: record.value }],
-                  },
-                },
-              ],
-            },
-            HostedZoneId: process.env.HOSTED_ZONE_ID,
-          };
+        // records.forEach(async (record) => {
+        //   const params = {
+        //     ChangeBatch: {
+        //       Changes: [
+        //         {
+        //           Action: "CREATE",
+        //           ResourceRecordSet: {
+        //             Name: record.domain,
+        //             Type: record.type,
+        //             TTL: record.ttl,
+        //             ResourceRecords: [{ Value: record.value }],
+        //           },
+        //         },
+        //       ],
+        //     },
+        //     HostedZoneId: process.env.HOSTED_ZONE_ID,
+        //   };
 
-          try {
-            await route53.changeResourceRecordSets(params).promise();
-          } catch (error) {
-            console.error("Error creating DNS record in Route 53:", error);
-          }
-        });
+        //   try {
+        //     await route53.changeResourceRecordSets(params).promise();
+        //   } catch (error) {
+        //     console.error("Error creating DNS record in Route 53:", error);
+        //   }
+        // });
 
         // Remove the temporary file after processing
         fs.unlinkSync(req.file.path);
@@ -108,25 +108,25 @@ exports.createRecord = async (req, res) => {
     const newRecord = await record.save();
 
     // Construct parameters for creating DNS record in Route 53
-    const params = {
-      ChangeBatch: {
-        Changes: [
-          {
-            Action: "CREATE",
-            ResourceRecordSet: {
-              Name: domain,
-              Type: type,
-              TTL: ttl,
-              ResourceRecords: [{ Value: value }],
-            },
-          },
-        ],
-      },
-      HostedZoneId: process.env.HOSTED_ZONE_ID,
-    };
+    // const params = {
+    //   ChangeBatch: {
+    //     Changes: [
+    //       {
+    //         Action: "CREATE",
+    //         ResourceRecordSet: {
+    //           Name: domain,
+    //           Type: type,
+    //           TTL: ttl,
+    //           ResourceRecords: [{ Value: value }],
+    //         },
+    //       },
+    //     ],
+    //   },
+    //   HostedZoneId: process.env.HOSTED_ZONE_ID,
+    // };
 
-    // Call the Route 53 API to create the DNS record
-    await route53.changeResourceRecordSets(params).promise();
+    // // Call the Route 53 API to create the DNS record
+    // await route53.changeResourceRecordSets(params).promise();
 
     // Return the newly created record
     res.status(201).json(newRecord);
@@ -160,26 +160,26 @@ exports.updateRecord = async (req, res) => {
     );
 
     // Construct parameters for updating DNS record in Route 53
-    const { domain, type, value, ttl } = req.body;
-    const params = {
-      ChangeBatch: {
-        Changes: [
-          {
-            Action: "UPSERT", // Update existing record or create if not exists
-            ResourceRecordSet: {
-              Name: domain,
-              Type: type,
-              TTL: ttl,
-              ResourceRecords: [{ Value: value }],
-            },
-          },
-        ],
-      },
-      HostedZoneId: process.env.HOSTED_ZONE_ID,
-    };
+    // const { domain, type, value, ttl } = req.body;
+    // const params = {
+    //   ChangeBatch: {
+    //     Changes: [
+    //       {
+    //         Action: "UPSERT", // Update existing record or create if not exists
+    //         ResourceRecordSet: {
+    //           Name: domain,
+    //           Type: type,
+    //           TTL: ttl,
+    //           ResourceRecords: [{ Value: value }],
+    //         },
+    //       },
+    //     ],
+    //   },
+    //   HostedZoneId: process.env.HOSTED_ZONE_ID,
+    // };
 
-    // Call the Route 53 API to update the DNS record
-    await route53.changeResourceRecordSets(params).promise();
+    // // Call the Route 53 API to update the DNS record
+    // await route53.changeResourceRecordSets(params).promise();
 
     // Return the updated record
     res.json(updatedRecord);
@@ -191,27 +191,26 @@ exports.updateRecord = async (req, res) => {
 exports.deleteRecord = async (req, res) => {
   try {
     // Construct parameters for deleting DNS record in Route 53
-    const recordToDelete = await DnsRecord.findById(req.params.id); // Find the record to delete
-
-    const params = {
-      ChangeBatch: {
-        Changes: [
-          {
-            Action: "DELETE", // Delete the existing record
-            ResourceRecordSet: {
-              Name: recordToDelete.domain, // Use the domain name of the record to delete
-              Type: recordToDelete.type, // Use the record type of the record to delete
-              TTL: recordToDelete.ttl, // Use the TTL of the record to delete
-              ResourceRecords: [{ Value: recordToDelete.value }], // Specify the resource record value
-            },
-          },
-        ],
-      },
-      HostedZoneId: process.env.HOSTED_ZONE_ID,
-    };
+    // const recordToDelete = await DnsRecord.findById(req.params.id); // Find the record to delete
+    // const params = {
+    //   ChangeBatch: {
+    //     Changes: [
+    //       {
+    //         Action: "DELETE", // Delete the existing record
+    //         ResourceRecordSet: {
+    //           Name: recordToDelete.domain, // Use the domain name of the record to delete
+    //           Type: recordToDelete.type, // Use the record type of the record to delete
+    //           TTL: recordToDelete.ttl, // Use the TTL of the record to delete
+    //           ResourceRecords: [{ Value: recordToDelete.value }], // Specify the resource record value
+    //         },
+    //       },
+    //     ],
+    //   },
+    //   HostedZoneId: process.env.HOSTED_ZONE_ID,
+    // };
 
     // Call the Route 53 API to delete the DNS record
-    await route53.changeResourceRecordSets(params).promise();
+    // await route53.changeResourceRecordSets(params).promise();
     // Find the record in MongoDB and delete it
     await DnsRecord.findOneAndDelete({ _id: req.params.id, user: req.user }); // Ensure record belongs to the authenticated user
     res.json({ message: "Record deleted" });
